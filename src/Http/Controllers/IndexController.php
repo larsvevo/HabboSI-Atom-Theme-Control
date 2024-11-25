@@ -17,7 +17,7 @@ class IndexController extends Controller
         $articles = WebsiteArticle::with('user')
             ->where('is_published', true)
             ->latest('id')
-            ->limit(4)
+            ->limit(5)
             ->get();
 
         $photos = CameraWeb::with('user')
