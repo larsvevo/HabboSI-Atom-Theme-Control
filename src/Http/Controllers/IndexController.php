@@ -75,7 +75,7 @@ class IndexController extends Controller
             ->join('users_settings', 'users.id', '=', 'users_settings.user_id')
             ->orderBy('users_settings.achievement_score', 'desc')
             ->select('users.*')
-            ->limit(11)
+            ->limit(1)
             ->get();
 
         
