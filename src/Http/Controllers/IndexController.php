@@ -82,16 +82,19 @@ class IndexController extends Controller
 
         $settingsStaff = WebsiteSetting::whereIn('key', ['staff_min_rank', 'min_rank_to_see_hidden_staff'])
             ->pluck('value', 'key');
-        
+
         $permissions = Permission::with(['users' => fn (Builder $query) => 
             $query->where('hidden_staff', '0')
                 ->orderBy('rank', 'DESC')
-                ->limit(4)
         ])->where('level', '>=', $settingsStaff->get('staff_min_rank', 4))
             ->orderBy('level', 'DESC')
             ->get();
 
-        
-        return view('index', compact('articles','credits','duckets','diamonds','onlineTimes','respects','achievements','permissions'));
+        $users = $permissions
+            ->flatMap(fn ($permission) => $permission->users)
+            ->sortByDesc('rank') 
+            ->take(4); 
+
+        return view('index', compact('articles', 'credits', 'duckets', 'diamonds', 'onlineTimes', 'respects', 'achievements', 'users'));
     }
 }
