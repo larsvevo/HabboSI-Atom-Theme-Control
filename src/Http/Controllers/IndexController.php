@@ -4,6 +4,8 @@ namespace Atom\Theme\Http\Controllers;
 
 use Atom\Core\Models\WebsiteSetting;
 use Atom\Core\Models\WebsiteArticle;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Atom\Core\Models\Permission;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
 use Atom\Core\Models\User;
@@ -78,7 +80,18 @@ class IndexController extends Controller
             ->limit(1)
             ->get();
 
+        $settingsStaff = WebsiteSetting::whereIn('key', ['staff_min_rank', 'min_rank_to_see_hidden_staff'])
+            ->pluck('value', 'key');
         
-        return view('index', compact('articles','credits','duckets','diamonds','onlineTimes','respects','achievements',));
+        $permissions = Permission::with(['users' => fn (Builder $query) => 
+            $query->where('hidden_staff', '0')
+                ->orderBy('rank', 'DESC')
+                ->limit(4)
+        ])->where('level', '>=', $settingsStaff->get('staff_min_rank', 4))
+            ->orderBy('level', 'DESC')
+            ->get();
+
+        
+        return view('index', compact('articles','credits','duckets','diamonds','onlineTimes','respects','achievements','permissions'));
     }
 }
