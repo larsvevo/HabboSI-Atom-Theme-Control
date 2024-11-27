@@ -19,7 +19,7 @@ class LeaderboardController extends Controller
 
         $credits = User::where('rank', '<', $settings->get('min_staff_rank'))
             ->orderBy('credits', 'desc')
-            ->limit(10)
+            ->limit(5)
             ->get();
 
         $duckets = User::with(['currencies' => fn ($query) => $query->where('type', 0)])
@@ -29,7 +29,7 @@ class LeaderboardController extends Controller
             ->where('users_currency.type', 0)
             ->orderBy('users_currency.amount', 'desc')
             ->select('users.*')
-            ->limit(10)
+            ->limit(5)
             ->get();
 
         $diamonds = User::with(['currencies' => fn ($query) => $query->where('type', 5)])
@@ -39,7 +39,7 @@ class LeaderboardController extends Controller
             ->where('users_currency.type', 5)
             ->orderBy('users_currency.amount', 'desc')
             ->select('users.*')
-            ->limit(10)
+            ->limit(5)
             ->get();
 
         $onlineTimes = User::with('settings')
@@ -47,7 +47,7 @@ class LeaderboardController extends Controller
             ->join('users_settings', 'users.id', '=', 'users_settings.user_id')
             ->orderBy('users_settings.online_time', 'desc')
             ->select('users.*')
-            ->limit(10)
+            ->limit(5)
             ->get();
 
         $respects = User::with('settings')
@@ -55,7 +55,7 @@ class LeaderboardController extends Controller
             ->join('users_settings', 'users.id', '=', 'users_settings.user_id')
             ->orderBy('users_settings.respects_received', 'desc')
             ->select('users.*')
-            ->limit(10)
+            ->limit(5)
             ->get();
 
         $achievements = User::with('settings')
@@ -63,7 +63,7 @@ class LeaderboardController extends Controller
             ->join('users_settings', 'users.id', '=', 'users_settings.user_id')
             ->orderBy('users_settings.achievement_score', 'desc')
             ->select('users.*')
-            ->limit(10)
+            ->limit(5)
             ->get();
 
         return view('leaderboards', compact('credits', 'duckets', 'diamonds', 'onlineTimes', 'respects', 'achievements'));
