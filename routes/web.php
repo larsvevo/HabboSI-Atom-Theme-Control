@@ -47,6 +47,8 @@ Route::middleware('web')->group(function () {
         ->middleware(Authenticate::using('sanctum'), 'voting.check')
         ->name('rare-values');
 
+    Route::get('values/{value}', [WebsiteRareValuesController::class, 'value'])->name('values.value');
+
     Route::name('shop.')->group(function () {
         Route::get('shop', ShopController::class)
             ->middleware(Authenticate::using('sanctum'), 'voting.check')

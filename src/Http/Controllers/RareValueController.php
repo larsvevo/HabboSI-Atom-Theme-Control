@@ -24,4 +24,29 @@ class RareValueController extends Controller
 
         return view('rare-values', compact('categories'));
     }
+
+    public function value(WebsiteRareValue $value): View
+    {
+        $items = Item::with(['user:id,username,look'])
+            ->where('item_id', $value->item_id)
+            ->get();
+
+        $itemsPerUser = $items->groupBy('user_id')->map(function ($group) {
+            return [
+                'user' => $group->first()->user,
+                'item_count' => $group->count(),
+            ];
+        });
+
+        if ((bool) setting('enable_caching')) {
+            Cache::remember('allItems_'.$value->id, setting('cache_timer'), function () use ($items) {
+                return $items;
+            });
+        }
+
+        return view('value', [
+            'value' => $value,
+            'items' => $itemsPerUser,
+        ]);
+    }
 }
